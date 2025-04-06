@@ -11,6 +11,7 @@
   <div id="word">Загрузка...</div>
   <button id="repeat">🔈 Повторить</button>
   <div id="options"></div>
+  <div id="feedback"></div>
   <button id="skip">🗑 Не повторять это слово</button>
 
 <script>
@@ -31,6 +32,7 @@
     if (terms.length === 0) {
       document.getElementById("word").innerText = "🎉 Все слова изучены!";
       document.getElementById("options").innerHTML = "";
+      document.getElementById("feedback").innerText = "";
       return;
     }
 
@@ -39,7 +41,7 @@
     speak(current[0]);
 
     let options = [current];
-    while (options.length < 4) {
+    while (options.length < 5) {
       let rand = terms[Math.floor(Math.random() * terms.length)];
       if (!options.includes(rand)) options.push(rand);
     }
@@ -48,17 +50,22 @@
 
     const optDiv = document.getElementById("options");
     optDiv.innerHTML = "";
+    const feedback = document.getElementById("feedback");
+    feedback.innerText = "";
+
     options.forEach(opt => {
       const btn = document.createElement("button");
       btn.className = "option";
       btn.innerText = opt[1];
       btn.onclick = () => {
         if (opt === current) {
-          alert("✔ Верно!");
+          feedback.innerText = "✔ Верно!";
+          feedback.style.color = "green";
         } else {
-          alert("❌ Неверно. Правильный ответ: " + current[1]);
+          feedback.innerText = "❌ Неверно. Правильный ответ: " + current[1];
+          feedback.style.color = "red";
         }
-        showWord();
+        setTimeout(showWord, 1200);
       };
       optDiv.appendChild(btn);
     });

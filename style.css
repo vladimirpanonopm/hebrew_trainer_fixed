@@ -30,3 +30,7 @@ body {
   font-size: 0.9em;
   background-color: #e0ffe0;
 }
+#feedback {
+  margin-top: 15px;
+  font-weight: bold;
+}
