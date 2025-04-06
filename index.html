@@ -84,11 +84,12 @@
   document.getElementById("skip").onclick = skipWord;
 
   fetch("terms.json")
-    .then(res => res.json())
-    .then(data => {
-      terms = data;
-      window.speechSynthesis.onvoiceschanged = showWord;
-    });
+  .then(res => res.json())
+  .then(data => {
+    terms = data;
+    showWord(); // запускаем сразу
+  });
+
 </script>
 </body>
 </html>
