@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Тренажёр иврито-русских терминов</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>🧠 Тренажёр иврито-русских терминов</h1>
+  <div id="word">Загрузка...</div>
+  <button id="repeat">🔈 Повторить</button>
+  <div id="options"></div>
+  <button id="skip">🗑 Не повторять это слово</button>
+
+<script>
+  let terms = [];
+  let current = null;
+
+  function speak(text) {
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'he-IL';
+    const voices = speechSynthesis.getVoices();
+    const ivrit = voices.find(v => v.lang.startsWith("he"));
+    if (ivrit) msg.voice = ivrit;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(msg);
+  }
+
+  function showWord() {
+    if (terms.length === 0) {
+      document.getElementById("word").innerText = "🎉 Все слова изучены!";
+      document.getElementById("options").innerHTML = "";
+      return;
+    }
+
+    current = terms[Math.floor(Math.random() * terms.length)];
+    document.getElementById("word").innerText = current[0];
+    speak(current[0]);
+
+    let options = [current];
+    while (options.length < 4) {
+      let rand = terms[Math.floor(Math.random() * terms.length)];
+      if (!options.includes(rand)) options.push(rand);
+    }
+
+    options = options.sort(() => Math.random() - 0.5);
+
+    const optDiv = document.getElementById("options");
+    optDiv.innerHTML = "";
+    options.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "option";
+      btn.innerText = opt[1];
+      btn.onclick = () => {
+        if (opt === current) {
+          alert("✔ Верно!");
+        } else {
+          alert("❌ Неверно. Правильный ответ: " + current[1]);
+        }
+        showWord();
+      };
+      optDiv.appendChild(btn);
+    });
+  }
+
+  function skipWord() {
+    terms = terms.filter(t => t !== current);
+    showWord();
+  }
+
+  function repeatWord() {
+    if (current) speak(current[0]);
+  }
+
+  document.getElementById("repeat").onclick = repeatWord;
+  document.getElementById("skip").onclick = skipWord;
+
+  fetch("terms.json")
+    .then(res => res.json())
+    .then(data => {
+      terms = data;
+      window.speechSynthesis.onvoiceschanged = showWord;
+    });
+</script>
+</body>
+</html>
