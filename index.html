@@ -83,12 +83,23 @@
   document.getElementById("repeat").onclick = repeatWord;
   document.getElementById("skip").onclick = skipWord;
 
-  fetch("terms.json")
+ fetch("terms.json")
   .then(res => res.json())
   .then(data => {
     terms = data;
-    showWord(); // запускаем сразу
+
+    function start() {
+      showWord(); // покажи слово
+      speak(current[0]); // и сразу озвучь
+    }
+
+    if (speechSynthesis.getVoices().length > 0) {
+      start();
+    } else {
+      speechSynthesis.onvoiceschanged = start;
+    }
   });
+
 
 </script>
 </body>
